@@ -1,6 +1,7 @@
 from superagi.tools.base_tool import BaseTool
 from pydantic import BaseModel, Field
 from typing import Type
+import logging
 
 
 class SearchOnAmazonInput(BaseModel):
@@ -9,7 +10,7 @@ class SearchOnAmazonInput(BaseModel):
 
 class SearchOnAmazonTool(BaseTool):
     """
-    Greetings Tool
+    Search On Amazon Tool
     """
     name: str = "Search On Amazon Tool"
     description: str = "Allows searching for products on Amazon"
@@ -21,14 +22,19 @@ class SearchOnAmazonTool(BaseTool):
     def search_products_on_amazon(self, query: str):
         try:
             import requests
+            url = 'https://api.scraperapi.com/structured/amazon/search'
             payload = {
                 'api_key': self.get_tool_config('API_KEY'),
                 'query': query,
                 'country': self.get_tool_config('COUNTRY').lower(),
                 'tld': self.get_tool_config('TLD').lower(),
             }
-            r = requests.get('https://api.scraperapi.com/structured/amazon/search', params=payload)
+            logging.info(f"Calling {url} with payload {payload}")
+            r = requests.get(url, params=payload)
+
             results_raw = r.json()
+            logging.info(f"Got results: {results_raw}")
+
             results = []
             for result_raw in results_raw.get('results', []):
                 results.append({

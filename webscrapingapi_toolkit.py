@@ -13,4 +13,3 @@ class WebScrapingApiToolkit(BaseToolkit, ABC):
 
     def get_env_keys(self) -> List[str]:
         return ["API_KEY", "COUNTRY", "TLD", "MAX_RESULTS"]
-    
